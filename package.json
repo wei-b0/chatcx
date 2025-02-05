@@ -1,0 +1,35 @@
+{
+  "name": "cryptoria-x",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "agent-twitter-client": "^0.0.18",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "keyword-extractor": "^0.0.28",
+    "node-cron": "^3.0.3",
+    "pg": "^8.13.1",
+    "puppeteer": "^24.1.0",
+    "sentiment": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.11.10",
+    "@types/sentiment": "^5.0.4",
+    "@types/tough-cookie": "^4.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
