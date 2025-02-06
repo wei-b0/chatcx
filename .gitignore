@@ -1,3 +1,4 @@
 node_modules
 .env
 twitter_cookies.json
+dist

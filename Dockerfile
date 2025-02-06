@@ -10,7 +10,8 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN pnpm rebuild @roamhq/wrtc || echo "⚠️ wrtc rebuild failed, continuing..."
+ENV NODE_PATH="/app/node_modules"
+ENV LD_LIBRARY_PATH="/app/node_modules/.pnpm/@roamhq+wrtc-linux-x64@0.8.1/node_modules/@roamhq/wrtc-linux-x64"
 
 ENV COOKIE_STORAGE_PATH="/app/data"
 
