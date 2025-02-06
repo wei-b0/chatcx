@@ -2,13 +2,17 @@ import express from "express";
 import { answerQuery } from "./llm";
 import { runCronJob } from "./cron";
 import * as dotenv from "dotenv";
+import topAccountsRouter from "./TwitterPipeline/topAccountsRouter";
 
 dotenv.config();
-
-const app = express();
 const PORT = 7668;
 
 let lastUpdated: string | null = null;
+
+const app = express();
+app.use(express.json());
+
+app.use("/top-accounts", topAccountsRouter);
 
 app.get("/query", async (req: any, res: any) => {
   const query = req.query.text as string;

@@ -1,4 +1,4 @@
-import { getTopYappers } from "../TwitterPipeline/TopYappers";
+import { getTopAccounts } from "../TwitterPipeline/utils";
 import TwitterPipeline from "../TwitterPipeline/TwitterPipeline";
 import * as dotenv from "dotenv";
 import { preprocess } from "./preprocess_tweets";
@@ -7,8 +7,8 @@ dotenv.config();
 
 export const start = async () => {
   const twitter = new TwitterPipeline();
-  const topYappers = await getTopYappers();
-  const tweets = await twitter.run(topYappers);
+  const topAccounts = await getTopAccounts();
+  const tweets = await twitter.run(topAccounts);
 
   console.log(
     `Fetched ${tweets.length} tweets. Pre-processing them and storing...`
