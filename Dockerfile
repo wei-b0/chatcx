@@ -10,6 +10,8 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY . .
 
+RUN pnpm rebuild @roamhq/wrtc || echo "⚠️ wrtc rebuild failed, continuing..."
+
 ENV COOKIE_STORAGE_PATH="/app/data"
 
 ENV PUPPETEER_SKIP_DOWNLOAD=true \
