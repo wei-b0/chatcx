@@ -6,36 +6,52 @@ import topAccountsRouter from "./TwitterPipeline/topAccountsRouter";
 
 dotenv.config();
 const PORT = 7886;
+const API_PREFIX = "/api";
 
 let lastUpdated: string | null = null;
 
 const app = express();
 app.use(express.json());
 
-app.use("/top-accounts", topAccountsRouter);
+app.use(`${API_PREFIX}/top-accounts`, topAccountsRouter);
 
-app.get("/query", async (req: any, res: any) => {
-  const query = req.query.text as string;
+app.post(`${API_PREFIX}/chat`, async (req: any, res: any) => {
+  const query = req.body.query;
   if (!query) {
     return res
       .status(400)
-      .json({ error: "Query parameter 'text' is required." });
+      .json({ error: "Body parameter 'query' is required." });
   }
 
   try {
-    const answer = await answerQuery(query);
-    res.json({ answer });
+    const rawAnswer = await answerQuery(query);
+
+    const thinkBlockMatch = rawAnswer.match(/<think>([\s\S]*?)<\/think>/);
+    const thinkBlock = thinkBlockMatch ? thinkBlockMatch[1].trim() : null;
+
+    const cleanedAnswer = rawAnswer
+      .replace(/<think>[\s\S]*?<\/think>\n*/, "")
+      .trim();
+
+    res.json({
+      success: true,
+      think: thinkBlock,
+      answer: cleanedAnswer,
+      metadata: {
+        last_updated: lastUpdated,
+      },
+    });
   } catch (error) {
     console.error("Error answering query:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-app.get("/health", (_req: any, res: any) => {
+app.get(`${API_PREFIX}/health`, (_req: any, res: any) => {
   res.json({ status: "OK", uptime: process.uptime() });
 });
 
-app.get("/last-updated", (_req: any, res: any) => {
+app.get(`${API_PREFIX}/last-updated`, (_req: any, res: any) => {
   if (!lastUpdated) {
     return res.status(404).json({ error: "Cron job has not run yet." });
   }

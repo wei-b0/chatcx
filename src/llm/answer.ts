@@ -28,15 +28,11 @@ export async function answerQuery(userQuery: string): Promise<string> {
   await client.connect();
   const formattedEmbedding = `[${queryEmbedding.join(",")}]`;
 
-  console.log("Formatted Embedding:", formattedEmbedding);
-
   const { rows } = await client.query(sql, [formattedEmbedding, userQuery]);
 
   const systemPrompt = ReplyGenerator;
 
   const userPrompt = UserPrompt(userQuery, JSON.stringify(rows));
-
-  console.log(systemPrompt, userPrompt);
 
   const response = await axios.post(
     "https://api.hyperbolic.xyz/v1/chat/completions",
@@ -59,6 +55,5 @@ export async function answerQuery(userQuery: string): Promise<string> {
     }
   );
 
-  console.log("LLM Response:", response);
   return response.data.choices[0].message.content;
 }

@@ -1,10 +1,6 @@
-import { Pool } from "pg";
+import { Client } from "pg";
 import csv from "csv-parser";
 import stream from "stream";
-
-const pool = new Pool({
-  connectionString: process.env.DB_CONNECTION_STRING,
-});
 
 export const insertTopAccounts = async (
   fileBuffer: Buffer
@@ -15,14 +11,19 @@ export const insertTopAccounts = async (
     const bufferStream = new stream.PassThrough();
     bufferStream.end(fileBuffer);
 
-    const parser = bufferStream.pipe(csv());
+    const parser = bufferStream.pipe(csv({ headers: true }));
     for await (const row of parser) {
-      if (row.username) {
-        results.push(row.username.trim());
-      }
+      Object.values(row).forEach((username: any) => {
+        results.push(username.trim());
+      });
     }
 
-    const client = await pool.connect();
+    const client = new Client({
+      connectionString: process.env.DB_CONNECTION_STRING,
+    });
+
+    await client.connect();
+
     try {
       for (const username of results) {
         await client.query(
@@ -34,7 +35,7 @@ export const insertTopAccounts = async (
       }
       return results.length;
     } finally {
-      client.release();
+      await client.end();
     }
   } catch (error) {
     console.error("Error processing CSV:", error);
@@ -44,9 +45,16 @@ export const insertTopAccounts = async (
 
 export const getTopAccounts = async (): Promise<string[]> => {
   try {
-    const { rows } = await pool.query(
+    const client = new Client({
+      connectionString: process.env.DB_CONNECTION_STRING,
+    });
+
+    await client.connect();
+    const { rows } = await client.query(
       "SELECT username FROM top_accounts ORDER BY username ASC"
     );
+    await client.end();
+
     return rows.map((row) => row.username);
   } catch (error) {
     console.error("Error fetching top accounts:", error);
