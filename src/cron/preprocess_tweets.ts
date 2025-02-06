@@ -4,7 +4,7 @@ import { createDocument } from "../llm/embed";
 
 export async function preprocess(tweets: Tweet[]) {
   const client = new Client({
-    connectionString: process.env.NEON_DB_CONNECTION_STRING,
+    connectionString: process.env.DB_CONNECTION_STRING,
   });
 
   await client.connect();

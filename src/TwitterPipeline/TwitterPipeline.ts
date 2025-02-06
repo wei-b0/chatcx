@@ -9,7 +9,10 @@ class TwitterPipeline {
 
   constructor() {
     this.scraper = new Scraper();
-    this.cookiesPath = path.join(process.cwd(), "twitter_cookies.json");
+    this.cookiesPath = path.join(
+      process.env.COOKIE_STORAGE_PATH || "/app/data",
+      "twitter_cookies.json"
+    );
   }
 
   private async saveCookies(): Promise<void> {

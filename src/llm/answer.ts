@@ -23,7 +23,7 @@ export async function answerQuery(userQuery: string): Promise<string> {
   `;
 
   const client = new Client({
-    connectionString: process.env.NEON_DB_CONNECTION_STRING,
+    connectionString: process.env.DB_CONNECTION_STRING,
   });
   await client.connect();
   const formattedEmbedding = `[${queryEmbedding.join(",")}]`;
