@@ -1,4 +1,6 @@
-FROM node:22.13.1-bullseye
+FROM node:18-bookworm-slim
+
+RUN apt-get update
 
 WORKDIR /app
 
@@ -9,9 +11,6 @@ COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY . .
-
-ENV NODE_PATH="/app/node_modules"
-ENV LD_LIBRARY_PATH="/app/node_modules/.pnpm/@roamhq+wrtc-linux-x64@0.8.1/node_modules/@roamhq/wrtc-linux-x64"
 
 ENV COOKIE_STORAGE_PATH="/app/data"
 

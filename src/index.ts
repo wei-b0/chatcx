@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 import topAccountsRouter from "./TwitterPipeline/topAccountsRouter";
 
 dotenv.config();
-const PORT = 7668;
+const PORT = 7886;
 
 let lastUpdated: string | null = null;
 
