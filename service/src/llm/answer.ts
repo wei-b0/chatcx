@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getEmbedding } from "./embed";
 import { ReplyGenerator, UserPrompt } from "./prompts";
-import { Client } from "pg";
+import pool from "../db";
 
 export async function answerQuery(userQuery: string): Promise<string> {
   const queryEmbedding = await getEmbedding(userQuery);
@@ -22,38 +22,39 @@ export async function answerQuery(userQuery: string): Promise<string> {
     LIMIT 25;
   `;
 
-  const client = new Client({
-    connectionString: process.env.DB_CONNECTION_STRING,
-  });
-  await client.connect();
+  const client = await pool.connect();
   const formattedEmbedding = `[${queryEmbedding.join(",")}]`;
 
-  const { rows } = await client.query(sql, [formattedEmbedding, userQuery]);
+  try {
+    const { rows } = await client.query(sql, [formattedEmbedding, userQuery]);
 
-  const systemPrompt = ReplyGenerator;
+    const systemPrompt = ReplyGenerator;
 
-  const userPrompt = UserPrompt(userQuery, JSON.stringify(rows));
+    const userPrompt = UserPrompt(userQuery, JSON.stringify(rows));
 
-  const response = await axios.post(
-    "https://api.hyperbolic.xyz/v1/chat/completions",
-    {
-      model: "deepseek-ai/DeepSeek-R1",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      temperature: 0.2,
-      top_p: 0.3,
-      max_tokens: 2000,
-      stream: false,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.HYPERBOLIC_API_KEY}`,
+    const response = await axios.post(
+      "https://api.hyperbolic.xyz/v1/chat/completions",
+      {
+        model: "deepseek-ai/DeepSeek-R1",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.2,
+        top_p: 0.3,
+        max_tokens: 2000,
+        stream: false,
       },
-    }
-  );
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.HYPERBOLIC_API_KEY}`,
+        },
+      }
+    );
 
-  return response.data.choices[0].message.content;
+    return response.data.choices[0].message.content;
+  } finally {
+    client.release();
+  }
 }

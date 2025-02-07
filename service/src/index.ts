@@ -1,6 +1,5 @@
 import express from "express";
 import { answerQuery } from "./llm";
-import { runCronJob } from "./cron";
 import * as dotenv from "dotenv";
 import topAccountsRouter from "./TwitterPipeline/topAccountsRouter";
 

@@ -1,6 +1,7 @@
 import { Client } from "pg";
 import csv from "csv-parser";
 import stream from "stream";
+import pool from "../db";
 
 export const insertTopAccounts = async (
   fileBuffer: Buffer
@@ -18,11 +19,7 @@ export const insertTopAccounts = async (
       });
     }
 
-    const client = new Client({
-      connectionString: process.env.DB_CONNECTION_STRING,
-    });
-
-    await client.connect();
+    const client = await pool.connect();
 
     try {
       for (const username of results) {
@@ -35,7 +32,7 @@ export const insertTopAccounts = async (
       }
       return results.length;
     } finally {
-      await client.end();
+      await client.release();
     }
   } catch (error) {
     console.error("Error processing CSV:", error);
@@ -45,15 +42,11 @@ export const insertTopAccounts = async (
 
 export const getTopAccounts = async (): Promise<string[]> => {
   try {
-    const client = new Client({
-      connectionString: process.env.DB_CONNECTION_STRING,
-    });
-
-    await client.connect();
+    const client = await pool.connect();
     const { rows } = await client.query(
       "SELECT username FROM top_accounts ORDER BY username ASC"
     );
-    await client.end();
+    await client.release();
 
     return rows.map((row) => row.username);
   } catch (error) {
