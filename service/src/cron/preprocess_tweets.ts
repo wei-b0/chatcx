@@ -1,10 +1,11 @@
 import { Client } from "pg";
 import { Tweet } from "agent-twitter-client";
 import { createDocument } from "../llm/embed";
+import { DB_CONNECTION_STRING } from "../config/env";
 
 export async function preprocess(tweets: Tweet[]) {
   const client = new Client({
-    connectionString: process.env.DB_CONNECTION_STRING,
+    connectionString: DB_CONNECTION_STRING,
   });
 
   await client.connect();

@@ -3,6 +3,7 @@ import axios from "axios";
 import Sentiment from "sentiment";
 import keywordExtractor from "keyword-extractor";
 import { Document } from "../types";
+import { OPENAI_API_KEY } from "../config/env";
 
 export function extractKeywords(text: string): string[] {
   const extractionResult = keywordExtractor.extract(text, {
@@ -125,7 +126,7 @@ export async function getEmbedding(text: string): Promise<number[]> {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
         },
       }
     );

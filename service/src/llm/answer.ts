@@ -2,6 +2,7 @@ import axios from "axios";
 import { getEmbedding } from "./embed";
 import { ReplyGenerator, UserPrompt } from "./prompts";
 import pool from "../db";
+import { HYPERBOLIC_API_KEY } from "../config/env";
 
 export async function answerQuery(userQuery: string): Promise<string> {
   const queryEmbedding = await getEmbedding(userQuery);
@@ -48,7 +49,7 @@ export async function answerQuery(userQuery: string): Promise<string> {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.HYPERBOLIC_API_KEY}`,
+          Authorization: `Bearer ${HYPERBOLIC_API_KEY}`,
         },
       }
     );

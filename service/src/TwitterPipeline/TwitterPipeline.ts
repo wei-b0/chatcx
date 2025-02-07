@@ -2,6 +2,11 @@ import { Scraper, SearchMode } from "agent-twitter-client";
 import { Tweet } from "agent-twitter-client";
 import fs from "fs/promises";
 import path from "path";
+import {
+  TWITTER_EMAIL,
+  TWITTER_PASSWORD,
+  TWITTER_USERNAME,
+} from "../config/env";
 
 export class TwitterPipeline {
   private scraper: Scraper;
@@ -9,10 +14,7 @@ export class TwitterPipeline {
 
   constructor() {
     this.scraper = new Scraper();
-    this.cookiesPath = path.join(
-      process.env.COOKIE_STORAGE_PATH || "/app/data",
-      "twitter_cookies.json"
-    );
+    this.cookiesPath = path.join("/app/data", "twitter_cookies.json");
   }
 
   private async saveCookies(): Promise<void> {
@@ -71,9 +73,9 @@ export class TwitterPipeline {
       console.log("🔑 No cookies found. Proceeding with fresh login.");
     }
 
-    const username = process.env.TWITTER_USERNAME;
-    const password = process.env.TWITTER_PASSWORD;
-    const email = process.env.TWITTER_EMAIL;
+    const username = TWITTER_USERNAME;
+    const password = TWITTER_PASSWORD;
+    const email = TWITTER_EMAIL;
 
     if (!username || !password) {
       throw new Error("Twitter credentials not found");
