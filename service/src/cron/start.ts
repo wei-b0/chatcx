@@ -1,5 +1,4 @@
-import { getTopAccounts } from "../TwitterPipeline/utils";
-import TwitterPipeline from "../TwitterPipeline/TwitterPipeline";
+import { TwitterPipeline, getTopAccounts } from "../TwitterPipeline";
 import * as dotenv from "dotenv";
 import { preprocess } from "./preprocess_tweets";
 

@@ -3,7 +3,7 @@ import { Tweet } from "agent-twitter-client";
 import fs from "fs/promises";
 import path from "path";
 
-class TwitterPipeline {
+export class TwitterPipeline {
   private scraper: Scraper;
   private cookiesPath: string;
 
@@ -179,5 +179,3 @@ class TwitterPipeline {
     return results;
   }
 }
-
-export default TwitterPipeline;

@@ -1,7 +1,8 @@
-import { Client } from "pg";
 import csv from "csv-parser";
 import stream from "stream";
 import pool from "../db";
+
+export * from "./TwitterPipeline";
 
 export const insertTopAccounts = async (
   fileBuffer: Buffer
