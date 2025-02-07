@@ -60,7 +60,4 @@ app.get(`${API_PREFIX}/last-updated`, (_req: any, res: any) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  runCronJob((timestamp) => {
-    lastUpdated = timestamp;
-  });
 });
