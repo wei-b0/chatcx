@@ -32,7 +32,7 @@ bot.start(async (ctx: Context) => {
   trackEvent((tgId as any).toString(), "start_clicked");
   if (user) {
     trackEvent((tgId as any).toString(), "register_user_clicked", { username });
-    const welcomeMessage = `🦜 Welcome back, ${username}!\n\nWhat’s squawking in crypto today?`;
+    const welcomeMessage = `🦜 Welcome back, ${username}!\n\nWhat’s squawking in Web3 today?`;
     ctx.reply(welcomeMessage, {
       reply_markup: {
         keyboard: [
@@ -48,7 +48,7 @@ bot.start(async (ctx: Context) => {
     trackEvent((tgId as any).toString(), "non_registered_user_clicked", {
       username,
     });
-    const welcomeMessage = `🦜 Squawk ${username}!\n\n<b>Welcome to Crypto Parrot</b>—your <b>AI</b>-powered sidekick for <b>Real-Time Crypto Twitter insights and trends</b>.\n\nStay ahead of the metas and never miss what’s buzzing in the crypto world!`;
+    const welcomeMessage = `🦜 Squawk ${username}!\n\n<b>Welcome to Crypto Parrot</b>—your <b>AI</b>-powered sidekick for <b>Real-Time Web3 Twitter insights and trends</b>.\n\nStay ahead of the metas and never miss what’s buzzing in the web3 world!`;
 
     ctx.reply(welcomeMessage, {
       reply_markup: {
@@ -75,7 +75,7 @@ bot.help((ctx) => {
     username,
   });
   ctx.reply(
-    `<b>What Crypto Parrot Does</b>\n- <b>Parrot Feed</b>: A personalized summary of the latest and upcoming metas on crypto Twitter, intelligently curated by our AI.\n- <b>Trending Now</b>: Real-time highlights of the most engaging tweets and trends, identified and ranked using AI-powered insights.\n- <b>Top Influencers</b>: A leaderboard showcasing the most active and impactful voices in crypto.\n\n<i>All updates are delivered in real-time, straight from the sharpest minds and most influential players in crypto—with a little help from AI magic. Squawk on!</i>`,
+    `<b>What Crypto Parrot Does</b>\n- <b>Parrot Feed</b>: A personalized summary of the latest and upcoming metas on Web3 Twitter, intelligently curated by our AI.\n- <b>Trending Now</b>: Real-time highlights of the most engaging tweets and trends, identified and ranked using AI-powered insights.\n- <b>Top Influencers</b>: A leaderboard showcasing the most active and impactful voices in Web3.\n\n<i>All updates are delivered in real-time, straight from the sharpest minds and most influential players in Web3—with a little help from AI magic. Squawk on!</i>`,
     { parse_mode: "HTML" }
   );
 });
@@ -87,7 +87,7 @@ bot.command("about", (ctx) => {
     username,
   });
   ctx.reply(
-    "🦜 About Crypto Parrot\n\nWelcome to <i>Crypto Parrot</i>—the AI-powered Telegram bot for crypto enthusiasts, fellow marketeers, or curious minds who want to stay informed about the latest and upcoming trends (or metas) shaping the crypto space, real-time from Crypto Twitter. Whether you’re exploring influencer insights or just keeping up with what’s buzzing, Crypto Parrot delivers it all in real-time.\n\n<i>What Makes Crypto Parrot Unique</i>  \n- <b>Hourly Refreshes</b>: Get the freshest updates and never miss a beat.  \n- <b>AI-Driven Insights</b>: We cut through the noise and deliver the signal.  \n- <b>Crypto Culture Savvy</b>: From memes to moonshots, we cover it all—zesty, snappy, and fun.\n\nCrypto Parrot keeps you informed, engaged, and in the know. <i>Squawk on and stay ahead!</i>",
+    "🦜 About Crypto Parrot\n\nWelcome to <i>Crypto Parrot</i>—the AI-powered Telegram bot for Web3 enthusiasts, fellow marketeers, or curious minds who want to stay informed about the latest and upcoming trends (or metas) shaping the web3 space, real-time from Web3 Twitter. Whether you’re exploring influencer insights or just keeping up with what’s buzzing, Crypto Parrot delivers it all in real-time.\n\n<i>What Makes Crypto Parrot Unique</i>  \n- <b>Hourly Refreshes</b>: Get the freshest updates and never miss a beat.  \n- <b>AI-Driven Insights</b>: We cut through the noise and deliver the signal.  \n- <b>Web3 Culture Savvy</b>: From memes to moonshots, we cover it all—zesty, snappy, and fun.\n\nCrypto Parrot keeps you informed, engaged, and in the know. <i>Squawk on and stay ahead!</i>",
     { parse_mode: "HTML" }
   );
 });
@@ -101,7 +101,7 @@ bot.command("settings", (ctx) => {
 bot.hears("🦜 Parrot Feed", async (ctx) => {
   const username = ctx.from.username;
   const tgId = ctx.from?.id;
-  ctx.reply("🦜 Fetching your Parrot Feed with the latest crypto insights...");
+  ctx.reply("🦜 Fetching your Parrot Feed with the latest web3 insights...");
   const user = await getUserByTelegramId(Number(tgId));
   if (!user) {
     trackEvent(tgId.toString(), "parrot_feed_clicked_non_user", { username });
@@ -161,7 +161,7 @@ bot.hears("🦜 Parrot Feed", async (ctx) => {
 bot.hears("🪙 Trending Now", async (ctx) => {
   const username = ctx.from.username;
   const tgId = ctx.from?.id;
-  ctx.reply("🪙 Fetching the hottest trends in crypto right now...");
+  ctx.reply("🪙 Fetching the hottest trends in web3 right now...");
   const user = await getUserByTelegramId(Number(tgId));
   if (!user) {
     trackEvent(tgId.toString(), "trending_now_clicked_non_user", { username });
@@ -214,11 +214,11 @@ bot.hears("🪙 Trending Now", async (ctx) => {
   }
 });
 
-bot.hears("🎯 Top Influencers", (ctx) => {
+bot.hears("🎯 Top KOLs", (ctx) => {
   const tgId = ctx.from.id;
   const username = ctx.from.username;
   trackEvent(tgId.toString(), "top_influencers_clicked", { username });
-  ctx.reply("🎯 These are today’s top crypto influencers (coming soon)!");
+  ctx.reply("🎯 These are today’s top KOLs (coming soon)!");
 });
 
 bot.hears("📚 Help Center", (ctx) => {
@@ -226,7 +226,7 @@ bot.hears("📚 Help Center", (ctx) => {
   const username = ctx.from.username;
   trackEvent(tgId.toString(), "help_center_clicked", { username });
   ctx.reply(
-    `<b>What Crypto Parrot Does</b>\n- <b>Parrot Feed</b>: A personalized summary of the latest and upcoming metas on crypto Twitter, intelligently curated by our AI.\n\n- <b>Trending Now</b>: Real-time highlights of the most engaging tweets and trends, identified and ranked using AI-powered insights.\n\n- <b>Top Influencers</b>: A leaderboard showcasing the most active and impactful voices in crypto.\n\n<i>All updates are delivered in real-time, straight from the sharpest minds and most influential players in crypto—with a little help from AI magic. Squawk on!</i>`,
+    `<b>What Crypto Parrot Does</b>\n- <b>Parrot Feed</b>: A personalized summary of the latest and upcoming metas on Web3 Twitter, intelligently curated by our AI.\n\n- <b>Trending Now</b>: Real-time highlights of the most engaging tweets and trends, identified and ranked using AI-powered insights.\n\n- <b>Top Influencers</b>: A leaderboard showcasing the most active and impactful voices in Web3.\n\n<i>All updates are delivered in real-time, straight from the sharpest minds and most influential players in web3—with a little help from AI magic. Squawk on!</i>`,
     { parse_mode: "HTML" }
   );
 });
@@ -234,7 +234,7 @@ bot.hears("📚 Help Center", (ctx) => {
 bot.action("help_yes", async (ctx) => {
   await ctx.editMessageReplyMarkup({ reply_markup: undefined } as any);
   ctx.reply(
-    `<b>What Crypto Parrot Does</b>\n\n- <b>Parrot Feed</b>: A personalized summary of the latest and upcoming metas on crypto Twitter, intelligently curated by our AI.\n\n- <b>Trending Now</b>: Real-time highlights of the most engaging tweets and trends, identified and ranked using AI-powered insights.\n\n- <b>Top Influencers</b>: A leaderboard showcasing the most active and impactful voices in crypto.\n\n<i>All updates are delivered in real-time, straight from the sharpest minds and most influential players in crypto—with a little help from AI magic. Squawk on!</i>`,
+    `<b>What Crypto Parrot Does</b>\n\n- <b>Parrot Feed</b>: A personalized summary of the latest and upcoming metas on Web3 Twitter, intelligently curated by our AI.\n\n- <b>Trending Now</b>: Real-time highlights of the most engaging tweets and trends, identified and ranked using AI-powered insights.\n\n- <b>Top Influencers</b>: A leaderboard showcasing the most active and impactful voices in Web3.\n\n<i>All updates are delivered in real-time, straight from the sharpest minds and most influential players in web3—with a little help from AI magic. Squawk on!</i>`,
     { parse_mode: "HTML" }
   );
 

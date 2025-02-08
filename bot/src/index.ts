@@ -1,4 +1,4 @@
-import { Telegraf } from "telegraf";
+import { Markup, Telegraf } from "telegraf";
 import { BOT_TOKEN, MAX_CREDITS } from "./config/env";
 import {
   getUserCredits,
@@ -9,41 +9,79 @@ import { fetchCryptoriaResponse } from "./services/cryptoriaService";
 import { splitMessageIntoChunks } from "./utils/format";
 
 const bot = new Telegraf(BOT_TOKEN);
+const isProcessing = new Map();
 
 bot.start(async (ctx) => {
   const userId = ctx.message.from.id;
   const username = ctx.message.from.username || "unknown";
 
   await initializeUser(userId, username);
-  await ctx.reply("🤖 Hello! Ask me anything. You have 5 free creates.");
+  await ctx.replyWithMarkdown(
+    `🚀 *Welcome to ChatCX – Your AI Edge for Web3 Twitter!* 
+
+    🔎 Get instant insights on trending narratives, market shifts, and game-changing alpha.
+
+    🎁 *You have 5 free queries* to explore the hottest web3 insights!
+
+    👉 *Try asking:* 
+    - \`What’s the latest narrative on Base?\`
+    - \`What emerging trends are being discussed in crypto right now?\`
+    - \`What’s the hottest token of the week?\`
+    - \`Are there any new DeFi projects gaining attention?\`
+    
+    ⚠️ *Please be patient!* AI processing can take a few minutes. Avoid sending multiple queries at once.`
+  );
 });
 
 bot.on("text", async (ctx) => {
-  const userMessage = ctx.message.text;
   const userId = ctx.message.from.id;
-  const loadingMessage = await ctx.reply("🤖 Thinking...");
+
+  if (isProcessing.get(userId)) {
+    await ctx.reply(
+      `⏳ *I'm still processing your last request...* Please wait for a response before asking again!`
+    );
+    return;
+  }
+  isProcessing.set(userId, true);
+
+  const userMessage = ctx.message.text;
+
+  const loadingMessage = await ctx.reply(
+    "🤖 *Thinking...* This may take a few minutes. Please wait patiently and avoid sending multiple requests."
+  );
 
   const userCredits = await getUserCredits(userId);
   if (userCredits === null) {
     await initializeUser(userId, ctx.message.from.username || "unknown");
   } else if (userCredits <= 0) {
     await ctx.reply(
-      `⚠️ You've used all ${MAX_CREDITS} free requests. \nMessage @wei_b0 to get more creates.`
+      `⚠️ *You've used all ${MAX_CREDITS} free requests!* 🚀`,
+      Markup.inlineKeyboard([
+        Markup.button.url("📩 Message for Credits", "https://t.me/wei_b0"),
+      ])
     );
+    isProcessing.delete(userId);
     return;
   }
 
   await decrementUserCredits(userId);
   await ctx.telegram.sendChatAction(ctx.chat.id, "typing");
 
-  const aiReply = await fetchCryptoriaResponse(userMessage);
-  const chunks = splitMessageIntoChunks(aiReply, 4000);
+  try {
+    const aiReply = await fetchCryptoriaResponse(userMessage);
+    const chunks = splitMessageIntoChunks(aiReply, 4000);
 
-  await ctx.telegram.deleteMessage(ctx.chat.id, loadingMessage.message_id);
+    await ctx.telegram.deleteMessage(ctx.chat.id, loadingMessage.message_id);
 
-  for (const chunk of chunks) {
-    await ctx.reply(chunk, { parse_mode: "HTML" });
+    for (const chunk of chunks) {
+      await ctx.reply(chunk, { parse_mode: "HTML" });
+    }
+  } catch (error) {
+    console.error("Error fetching response:", error);
+    await ctx.reply("⚠️ Oops! Something went wrong. Try again later.");
   }
+
+  isProcessing.delete(userId);
 });
 
 bot.catch((err) => console.error("Bot Error:", err));
