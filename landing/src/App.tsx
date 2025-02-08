@@ -88,6 +88,32 @@ function App() {
           </div>
         </div>
 
+        {/* Products */}
+        <div className="mb-20">
+          <h2 className="text-3xl font-bold text-center mb-12 font-cassio">Available Products</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <ProductCard
+              icon={<Bot className="w-8 h-8" />}
+              title="ChatCX Chat"
+              description="Get instant insights directly through our Telegram bot. Just ask and receive."
+              link="#"
+            />
+            <ProductCard
+              icon={<img src={CryptoParrot} className='w-8 h-8' />}
+              title="Crypto Parrot"
+              description="AI-powered newsfeed delivering curated insights on Telegram. Stay informed 24/7."
+              link="#"
+            />
+            <ProductCard
+              icon={<MessageSquare className="w-8 h-8" />}
+              title="API Access"
+              description="Coming Soon - Integrate ChatCX insights into your own agents, tools and dashboards."
+              link="#"
+              soon
+            />
+          </div>
+        </div>
+
         {/* How It Works */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold text-center mb-12 font-cassio">How ChatCX Works</h2>
@@ -119,32 +145,6 @@ function App() {
                 Get instant, data-backed answers about trending tokens, narratives, and strategies to inform your decisions.
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* Products */}
-        <div className="mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12 font-cassio">Available Products</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <ProductCard
-              icon={<Bot className="w-8 h-8" />}
-              title="ChatCX Chat"
-              description="Get instant insights directly through our Telegram bot. Just ask and receive."
-              link="#"
-            />
-            <ProductCard
-              icon={<img src={CryptoParrot} className='w-8 h-8' />}
-              title="Crypto Parrot"
-              description="AI-powered newsfeed delivering curated insights on Telegram. Stay informed 24/7."
-              link="#"
-            />
-            <ProductCard
-              icon={<MessageSquare className="w-8 h-8" />}
-              title="API Access"
-              description="Coming Soon - Integrate ChatCX insights into your own agents, tools and dashboards."
-              link="#"
-              soon
-            />
           </div>
         </div>
 
