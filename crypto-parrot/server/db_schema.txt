@@ -11,3 +11,5 @@ CREATE TABLE users (
   access_token TEXT,
   refresh_token TEXT
 );
+
+ALTER TABLE users ADD COLUMN rate_limit JSONB DEFAULT '{}';

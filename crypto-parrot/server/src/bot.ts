@@ -3,18 +3,17 @@ import dotenv from "dotenv";
 import { checkRateLimit, getUserByTelegramId } from "./db";
 import { splitMessageIntoChunks } from "./utils/format";
 import { trackEvent } from "./utils/posthog";
+import axios from "axios";
 
 dotenv.config();
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const MINI_APP_URL = process.env.MINI_APP_URL;
+const API_URL = process.env.API_URL;
+const API_KEY = process.env.API_KEY;
 
-if (!BOT_TOKEN) {
-  throw new Error("TELEGRAM_BOT_TOKEN is not defined in .env");
-}
-
-if (!MINI_APP_URL) {
-  throw new Error("MINI_APP_URL is not defined in .env");
+if (!BOT_TOKEN || !MINI_APP_URL || !API_KEY || !API_URL) {
+  throw new Error("Incorrect .env");
 }
 
 const bot = new Telegraf(BOT_TOKEN);
@@ -69,10 +68,6 @@ bot.start(async (ctx: Context) => {
   }
 });
 
-/**
- * General command implementations
- */
-
 bot.help((ctx) => {
   const tgId = ctx.from.id;
   const username = ctx.from.username;
@@ -102,10 +97,6 @@ bot.command("settings", (ctx) => {
   trackEvent((tgId as any).toString(), "settings_clicked_registration");
   ctx.reply("Settings menu coming soon!");
 });
-
-/**
- * Implementation for Parrot Feed reply
- */
 
 bot.hears("🦜 Parrot Feed", async (ctx) => {
   const username = ctx.from.username;
@@ -143,7 +134,18 @@ bot.hears("🦜 Parrot Feed", async (ctx) => {
   }
 
   try {
-    // ADD API CALL TO CRYPTOCX SERVICE
+    const response = await axios.post(
+      API_URL,
+      {
+        query:
+          "Can you provide me a feed of latest news happening in the web3 and crypto ecosystem ? Keep the reply concise.",
+      },
+      { headers: { "x-api-key": API_KEY }, timeout: 360000 }
+    );
+    const answer = splitMessageIntoChunks(response.data.answer, 4000);
+    for (let chunk of answer) {
+      ctx.reply(chunk, { parse_mode: "HTML" });
+    }
   } catch (error) {
     console.error("Error generating Parrot Feed report:", error);
     ctx.reply(
@@ -192,7 +194,17 @@ bot.hears("🪙 Trending Now", async (ctx) => {
   }
 
   try {
-    // ADD API CALL TO CRYPTOCX SERVICE
+    const response = await axios.post(
+      API_URL,
+      {
+        query: "What has been trending lately ? Keep the reply concise.",
+      },
+      { headers: { "x-api-key": API_KEY }, timeout: 360000 }
+    );
+    const answer = splitMessageIntoChunks(response.data.answer, 4000);
+    for (let chunk of answer) {
+      ctx.reply(chunk, { parse_mode: "HTML" });
+    }
   } catch (error) {
     console.error("Error generating Trending Now report:", error);
     ctx.reply(
@@ -201,20 +213,12 @@ bot.hears("🪙 Trending Now", async (ctx) => {
   }
 });
 
-/**
- * Implementation for Top Influencers reply
- */
-
 bot.hears("🎯 Top Influencers", (ctx) => {
   const tgId = ctx.from.id;
   const username = ctx.from.username;
   trackEvent(tgId.toString(), "top_influencers_clicked", { username });
   ctx.reply("🎯 These are today’s top crypto influencers (coming soon)!");
 });
-
-/**
- * Implementation for Help Center reply
- */
 
 bot.hears("📚 Help Center", (ctx) => {
   const tgId = ctx.from.id;
@@ -225,10 +229,6 @@ bot.hears("📚 Help Center", (ctx) => {
     { parse_mode: "HTML" }
   );
 });
-
-/**
- * For Onboarding
- */
 
 bot.action("help_yes", async (ctx) => {
   await ctx.editMessageReplyMarkup({ reply_markup: undefined } as any);
@@ -244,10 +244,6 @@ bot.action("help_no", async (ctx) => {
   await ctx.editMessageReplyMarkup({ reply_markup: undefined } as any);
   await ctx.answerCbQuery();
 });
-
-/**
- * Start Bot Service
- */
 
 export const startBot = async () => {
   bot

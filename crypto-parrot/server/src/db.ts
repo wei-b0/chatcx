@@ -23,9 +23,10 @@ interface User {
   wallet_address: string;
   photo_url: string;
   referral_code: string;
-  registered_on: number; // Unix timestamp
+  registered_on: number;
   access_token: string;
   refresh_token: string;
+  rate_limit: Record<string, { request_count: number; last_reset: string }>;
 }
 
 export const checkRateLimit = async (
@@ -35,48 +36,42 @@ export const checkRateLimit = async (
   const maxRequests = 5;
 
   const result = await pool.query(
-    "SELECT request_count, last_reset FROM user_requests WHERE user_id = $1 AND feature = $2",
-    [userId, feature]
+    "SELECT rate_limit FROM users WHERE tg_user_id = $1",
+    [userId]
   );
 
   if (result.rows.length === 0) {
-    await pool.query(
-      "INSERT INTO user_requests (user_id, feature, request_count) VALUES ($1, $2, 1)",
-      [userId, feature]
-    );
-    return true;
-  }
-
-  const { request_count, last_reset } = result.rows[0];
-
-  const now = new Date();
-  const resetTime = new Date(last_reset);
-  const hoursSinceReset =
-    (now.getTime() - resetTime.getTime()) / (1000 * 60 * 60);
-
-  if (hoursSinceReset >= 48) {
-    await pool.query(
-      "UPDATE user_requests SET request_count = 1, last_reset = NOW() WHERE user_id = $1 AND feature = $2",
-      [userId, feature]
-    );
-    return true;
-  }
-
-  if (request_count >= maxRequests) {
     return false;
   }
 
-  await pool.query(
-    "UPDATE user_requests SET request_count = request_count + 1 WHERE user_id = $1 AND feature = $2",
-    [userId, feature]
-  );
+  let rateLimit = result.rows[0].rate_limit || {};
+  const now = new Date().toISOString();
+
+  if (!rateLimit[feature]) {
+    rateLimit[feature] = { request_count: 1, last_reset: now };
+  } else {
+    const { request_count, last_reset } = rateLimit[feature];
+    const hoursSinceReset =
+      (new Date(now).getTime() - new Date(last_reset).getTime()) /
+      (1000 * 60 * 60);
+
+    if (hoursSinceReset >= 48) {
+      rateLimit[feature] = { request_count: 1, last_reset: now };
+    } else if (request_count >= maxRequests) {
+      return false;
+    } else {
+      rateLimit[feature].request_count += 1;
+    }
+  }
+
+  await pool.query("UPDATE users SET rate_limit = $1 WHERE tg_user_id = $2", [
+    JSON.stringify(rateLimit),
+    userId,
+  ]);
 
   return true;
 };
 
-/**
- * Insert or update a user in the database using tg_user_id as the primary key.
- */
 export const upsertUser = async (user: User): Promise<void> => {
   const query = `
     INSERT INTO users (
@@ -117,9 +112,6 @@ export const upsertUser = async (user: User): Promise<void> => {
   await pool.query(query, values);
 };
 
-/**
- * Fetch a user by Telegram user ID.
- */
 export const getUserByTelegramId = async (
   tg_user_id: number
 ): Promise<User | null> => {
