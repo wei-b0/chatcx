@@ -55,7 +55,7 @@ function App() {
                 DeFAI Agents
               </h3>
               <p className="text-gray-300">
-                Use real-time insights in your DeFAI Agent pipeline to make more informed trading decisions.
+                Use real-time insights in your DeFAI Agent pipeline to make more informed decisions.
               </p>
             </div>
             <div className="bg-gray-800 rounded-xl p-8">
@@ -128,8 +128,8 @@ function App() {
           <div className="grid md:grid-cols-3 gap-8">
             <ProductCard
               icon={<Bot className="w-8 h-8" />}
-              title="ChatCX Telegram Bot"
-              description="Get instant crypto insights directly through our Telegram bot. Just ask and receive."
+              title="ChatCX Chat"
+              description="Get instant insights directly through our Telegram bot. Just ask and receive."
               link="#"
             />
             <ProductCard

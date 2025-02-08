@@ -1,0 +1,13 @@
+CREATE TABLE users (
+  tg_user_id BIGINT PRIMARY KEY,
+  user_id UUID UNIQUE,
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  tg_username VARCHAR(255),
+  wallet_address VARCHAR(255),
+  photo_url TEXT,
+  referral_code VARCHAR(10),
+  registered_on TIMESTAMP,
+  access_token TEXT,
+  refresh_token TEXT
+);
