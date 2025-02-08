@@ -1,4 +1,4 @@
-import { Bot, Brain, TrendingUp, MessageSquare, Zap, Twitter, ArrowRight, Database, Newspaper, Users, Book } from 'lucide-react';
+import { Bot, Brain, TrendingUp, MessageSquare, Zap, Twitter, ArrowRight, Database, Newspaper, Users } from 'lucide-react';
 import Logo from "./images/logo-no-bg.png"
 import CryptoParrot from "./images/crypto-parrot.jpeg"
 import Autonome from "./images/autonome.png"

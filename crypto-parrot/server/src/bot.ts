@@ -11,6 +11,7 @@ const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const MINI_APP_URL = process.env.MINI_APP_URL;
 const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
+const isProcessing = new Map();
 
 if (!BOT_TOKEN || !MINI_APP_URL || !API_KEY || !API_URL) {
   throw new Error("Incorrect .env");
@@ -101,12 +102,19 @@ bot.command("settings", (ctx) => {
 bot.hears("🦜 Parrot Feed", async (ctx) => {
   const username = ctx.from.username;
   const tgId = ctx.from?.id;
+  if (isProcessing.get(tgId)) {
+    await ctx.reply(
+      `⏳ *I'm still processing your last request...* Please wait for a response before asking again!`
+    );
+    return;
+  }
+  isProcessing.set(tgId, true);
   ctx.reply("🦜 Fetching your Parrot Feed with the latest web3 insights...");
   const user = await getUserByTelegramId(Number(tgId));
   if (!user) {
     trackEvent(tgId.toString(), "parrot_feed_clicked_non_user", { username });
     const welcomeMessage = `🦜 Squawk ${username},\nWelcome to Crypto Parrot!\n\nIt seems you’re trying to access this feature, but you’re not signed in yet. Sign in now to access this feature!`;
-
+    isProcessing.delete(tgId);
     return ctx.reply(welcomeMessage, {
       reply_markup: {
         inline_keyboard: [
@@ -128,6 +136,7 @@ bot.hears("🦜 Parrot Feed", async (ctx) => {
   const allowed = await checkRateLimit(tgId, "Parrot Feed");
 
   if (!allowed) {
+    isProcessing.delete(tgId);
     return ctx.reply(
       "🚨 Squawk! You’ve reached your free limit for the Parrot Feed today. Come back tomorrow for more insights, or get in touch with us at @wei_b0!"
     );
@@ -146,6 +155,7 @@ bot.hears("🦜 Parrot Feed", async (ctx) => {
     for (let chunk of answer) {
       ctx.reply(chunk, { parse_mode: "HTML" });
     }
+    isProcessing.delete(tgId);
   } catch (error) {
     console.error("Error generating Parrot Feed report:", error);
     ctx.reply(
@@ -161,9 +171,19 @@ bot.hears("🦜 Parrot Feed", async (ctx) => {
 bot.hears("🪙 Trending Now", async (ctx) => {
   const username = ctx.from.username;
   const tgId = ctx.from?.id;
+  const userId = ctx.message.from.id;
+
+  if (isProcessing.get(tgId)) {
+    await ctx.reply(
+      `⏳ *I'm still processing your last request...* Please wait for a response before asking again!`
+    );
+    return;
+  }
+  isProcessing.set(userId, true);
   ctx.reply("🪙 Fetching the hottest trends in web3 right now...");
   const user = await getUserByTelegramId(Number(tgId));
   if (!user) {
+    isProcessing.delete(tgId);
     trackEvent(tgId.toString(), "trending_now_clicked_non_user", { username });
     const welcomeMessage = `🦜 Squawk ${username},\nWelcome to Crypto Parrot!\n\nIt seems you’re trying to access this feature, but you’re not signed in yet. Sign in now to access this feature!`;
 
@@ -188,6 +208,7 @@ bot.hears("🪙 Trending Now", async (ctx) => {
   const allowed = await checkRateLimit(tgId, "Trending Now");
 
   if (!allowed) {
+    isProcessing.delete(tgId);
     return ctx.reply(
       "🚨 Squawk! You’ve reached your free limit for the Trending Now today. Come back tomorrow for more insights, or get in touch with @wei_b0!"
     );
@@ -206,6 +227,7 @@ bot.hears("🪙 Trending Now", async (ctx) => {
     for (let chunk of answer) {
       ctx.reply(chunk, { parse_mode: "HTML" });
     }
+    isProcessing.delete(tgId);
   } catch (error) {
     console.error("Error generating Trending Now report:", error);
     ctx.reply(
