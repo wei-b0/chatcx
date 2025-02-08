@@ -36,7 +36,7 @@ export const checkRateLimit = async (
   const maxRequests = 5;
 
   const result = await pool.query(
-    "SELECT rate_limit FROM users WHERE tg_user_id = $1",
+    "SELECT rate_limit FROM crypto_parrot WHERE tg_user_id = $1",
     [userId]
   );
 
@@ -64,22 +64,22 @@ export const checkRateLimit = async (
     }
   }
 
-  await pool.query("UPDATE users SET rate_limit = $1 WHERE tg_user_id = $2", [
-    JSON.stringify(rateLimit),
-    userId,
-  ]);
+  await pool.query(
+    "UPDATE crypto_parrot SET rate_limit = $1 WHERE tg_user_id = $2",
+    [JSON.stringify(rateLimit), userId]
+  );
 
   return true;
 };
 
 export const upsertUser = async (user: User): Promise<void> => {
   const query = `
-    INSERT INTO users (
+    INSERT INTO crypto_parrot (
       tg_user_id, user_id, first_name, last_name, tg_username,
       wallet_address, photo_url, referral_code, registered_on,
-      access_token, refresh_token
+      access_token, refresh_token, rate_limit
     ) VALUES (
-      $1, $2, $3, $4, $5, $6, $7, $8, to_timestamp($9), $10, $11
+      $1, $2, $3, $4, $5, $6, $7, $8, to_timestamp($9), $10, $11, $12
     )
     ON CONFLICT (tg_user_id)
     DO UPDATE SET
@@ -92,7 +92,8 @@ export const upsertUser = async (user: User): Promise<void> => {
       referral_code = EXCLUDED.referral_code,
       registered_on = EXCLUDED.registered_on,
       access_token = EXCLUDED.access_token,
-      refresh_token = EXCLUDED.refresh_token;
+      refresh_token = EXCLUDED.refresh_token,
+      rate_limit = EXCLUDED.rate_limit;
   `;
 
   const values = [
@@ -107,6 +108,7 @@ export const upsertUser = async (user: User): Promise<void> => {
     user.registered_on,
     user.access_token,
     user.refresh_token,
+    user.rate_limit,
   ];
 
   await pool.query(query, values);
@@ -115,7 +117,7 @@ export const upsertUser = async (user: User): Promise<void> => {
 export const getUserByTelegramId = async (
   tg_user_id: number
 ): Promise<User | null> => {
-  const query = `SELECT * FROM users WHERE tg_user_id = $1`;
+  const query = `SELECT * FROM crypto_parrot WHERE tg_user_id = $1`;
   const result = await pool.query(query, [tg_user_id]);
 
   return result.rows[0] || null;

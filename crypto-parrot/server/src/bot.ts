@@ -197,7 +197,8 @@ bot.hears("🪙 Trending Now", async (ctx) => {
     const response = await axios.post(
       API_URL,
       {
-        query: "What has been trending lately ? Keep the reply concise.",
+        query:
+          "Fetch me some of the hottest trends in web3 and crypto right now.",
       },
       { headers: { "x-api-key": API_KEY }, timeout: 360000 }
     );

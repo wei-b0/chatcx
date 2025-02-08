@@ -25,10 +25,6 @@ app.use(express.json());
 
 app.options("*", cors(corsOptions));
 
-if (!process.env.PRIVY_APP_ID || !process.env.PRIVY_APP_SECRET) {
-  process.exit(0);
-}
-
 app.get("/user/:tg_user_id", async (req: any, res: any) => {
   const tgUserId = parseInt(req.params.tg_user_id, 10);
 
@@ -90,6 +86,7 @@ app.post("/register", async (req: any, res: any) => {
       registered_on: user.registered_on,
       access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
+      rate_limit: {},
     });
 
     console.log("User successfully saved to the database.");
