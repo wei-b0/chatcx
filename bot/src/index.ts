@@ -39,9 +39,7 @@ bot.on("text", async (ctx) => {
 
   if (isProcessing.get(userId)) {
     await ctx.replyWithMarkdown(
-      `⏳ *I'm still processing your last request...* 
-      
-      Please wait for a response before asking again!`
+      `⏳ *I'm still processing your last request...*  Please wait for a response before asking again!`
     );
     return;
   }
@@ -50,9 +48,7 @@ bot.on("text", async (ctx) => {
   const userMessage = ctx.message.text;
 
   const loadingMessage = await ctx.replyWithMarkdown(
-    `🤖 *Thinking...* 
-
-    This may take a few minutes. Please wait patiently and avoid sending multiple requests.`
+    `🤖 *Thinking...*  This may take a few minutes. Please wait patiently and avoid sending multiple requests.`
   );
 
   const userCredits = await getUserCredits(userId);
