@@ -4,6 +4,7 @@ import { checkRateLimit, getUserByTelegramId } from "./db";
 import { splitMessageIntoChunks } from "./utils/format";
 import { trackEvent } from "./utils/posthog";
 import axios from "axios";
+import { pollForJobCompletion } from "./utils/poll";
 
 dotenv.config();
 
@@ -145,15 +146,23 @@ bot.hears("🦜 Parrot Feed", async (ctx) => {
   try {
     const response = await axios.post(
       API_URL,
-      {
-        query:
-          "Can you provide me a feed of latest news happening in the web3 and crypto ecosystem ? Keep the reply concise.",
-      },
-      { headers: { "x-api-key": API_KEY }, timeout: 360000 }
+      { query: "Fetch me the latest web3 and crypto insights." },
+      { headers: { "x-api-key": API_KEY } }
     );
-    const answer = splitMessageIntoChunks(response.data.answer, 4000);
-    for (let chunk of answer) {
-      ctx.reply(chunk, { parse_mode: "HTML" });
+
+    if (!response.data.chatId) throw new Error("Failed to retrieve Job ID");
+
+    const chatId = response.data.chatId;
+
+    const result = await pollForJobCompletion(chatId);
+
+    if (result) {
+      const answer = splitMessageIntoChunks(result.answer, 4000);
+      for (const chunk of answer) {
+        ctx.reply(chunk, { parse_mode: "HTML" });
+      }
+    } else {
+      ctx.reply("❌ Sorry, the request took too long. Please try again later.");
     }
     isProcessing.delete(tgId);
   } catch (error) {
@@ -221,11 +230,22 @@ bot.hears("🪙 Trending Now", async (ctx) => {
         query:
           "Fetch me some of the hottest trends in web3 and crypto right now.",
       },
-      { headers: { "x-api-key": API_KEY }, timeout: 360000 }
+      { headers: { "x-api-key": API_KEY } }
     );
-    const answer = splitMessageIntoChunks(response.data.answer, 4000);
-    for (let chunk of answer) {
-      ctx.reply(chunk, { parse_mode: "HTML" });
+
+    if (!response.data.chatId) throw new Error("Failed to retrieve Job ID");
+
+    const chatId = response.data.chatId;
+
+    const result = await pollForJobCompletion(chatId);
+
+    if (result) {
+      const answer = splitMessageIntoChunks(result.answer, 4000);
+      for (const chunk of answer) {
+        ctx.reply(chunk, { parse_mode: "HTML" });
+      }
+    } else {
+      ctx.reply("❌ Sorry, the request took too long. Please try again later.");
     }
     isProcessing.delete(tgId);
   } catch (error) {

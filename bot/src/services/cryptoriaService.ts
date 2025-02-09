@@ -10,7 +10,7 @@ export const fetchCryptoriaResponse = async (
       { query },
       { headers: { "x-api-key": API_KEY }, timeout: 360000 }
     );
-    return response.data.answer || "⚠️ AI is currently unavailable.";
+    return response.data.chatId || "⚠️ AI is currently unavailable.";
   } catch (error) {
     console.error("AI API Error:", error);
     return "⚠️ AI service is currently down. Please try again later.";

@@ -5,7 +5,7 @@ import { start } from "../cron/start";
 import { authenticateAPIKey } from "../middlewares";
 import pool from "../db";
 
-let lastUpdated: string | null = null;
+let lastUpdated: string | null = new Date().toUTCString();
 
 const router = express.Router();
 

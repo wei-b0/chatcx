@@ -7,6 +7,7 @@ import {
 } from "./services/userService";
 import { fetchCryptoriaResponse } from "./services/cryptoriaService";
 import { splitMessageIntoChunks } from "./utils/format";
+import { pollForJobCompletion } from "./utils/poll";
 
 const bot = new Telegraf(BOT_TOKEN);
 const isProcessing = new Map();
@@ -68,13 +69,21 @@ bot.on("text", async (ctx) => {
   await ctx.telegram.sendChatAction(ctx.chat.id, "typing");
 
   try {
-    const aiReply = await fetchCryptoriaResponse(userMessage);
-    const chunks = splitMessageIntoChunks(aiReply, 4000);
+    const chatId = await fetchCryptoriaResponse(userMessage);
+
+    const result = await pollForJobCompletion(chatId);
 
     await ctx.telegram.deleteMessage(ctx.chat.id, loadingMessage.message_id);
 
-    for (const chunk of chunks) {
-      await ctx.reply(chunk, { parse_mode: "HTML" });
+    if (result) {
+      const answer = splitMessageIntoChunks(result.answer, 4000);
+      for (const chunk of answer) {
+        await ctx.reply(chunk, { parse_mode: "HTML" });
+      }
+    } else {
+      await ctx.reply(
+        "❌ Sorry, the request took too long. Please try again later."
+      );
     }
   } catch (error) {
     console.error("Error fetching response:", error);
