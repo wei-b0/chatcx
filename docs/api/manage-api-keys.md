@@ -1,13 +1,16 @@
 # 🔑 Manage API Keys (Admin Only)
 
 ## Create a New API Key
+
 ### 🔹 Request
+
 ```http
-POST /api/api-keys
+POST /api/admin/api-keys
 Host: chatcx.com
 x-api-key: YOUR_ADMIN_KEY
 Content-Type: application/json
 ```
+
 ```json
 {
   "role": "app"
@@ -15,6 +18,7 @@ Content-Type: application/json
 ```
 
 ### 🔹 Response
+
 ```json
 {
   "success": true,
