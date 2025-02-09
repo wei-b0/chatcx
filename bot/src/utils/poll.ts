@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const POLL_INTERVAL = 5000;
+const POLL_INTERVAL = 30000;
 const MAX_RETRIES = 60;
 
 export async function pollForJobCompletion(chatId: string): Promise<any> {

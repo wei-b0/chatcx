@@ -7,14 +7,23 @@ const userStates = new Map<
     lastRequest: number;
   }
 >();
+
 const COOLDOWN_PERIOD = 180 * 1000;
 
 export const preventMultipleRequests =
   (): Middleware<Context> => async (ctx, next) => {
     const userId = ctx.message?.from?.id || ctx.callbackQuery?.from?.id;
+    const messageText = (ctx.message as any)?.text;
 
     if (!userId) {
       console.warn("No user ID found in context");
+      return next();
+    }
+
+    if (messageText && messageText.startsWith("/")) {
+      console.log(
+        `[DEBUG] User ${userId} sent a bot command, bypassing middleware.`
+      );
       return next();
     }
 
