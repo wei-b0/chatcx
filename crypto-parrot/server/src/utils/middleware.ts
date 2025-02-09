@@ -7,7 +7,7 @@ const userStates = new Map<
     lastRequest: number;
   }
 >();
-const COOLDOWN_PERIOD = 180 * 1000;
+const COOLDOWN_PERIOD = 120 * 1000;
 
 export const preventMultipleRequests =
   (): Middleware<Context> => async (ctx, next) => {
