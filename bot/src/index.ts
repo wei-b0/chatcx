@@ -38,8 +38,10 @@ bot.on("text", async (ctx) => {
   const userId = ctx.message.from.id;
 
   if (isProcessing.get(userId)) {
-    await ctx.reply(
-      `⏳ *I'm still processing your last request...* Please wait for a response before asking again!`
+    await ctx.replyWithMarkdown(
+      `⏳ *I'm still processing your last request...* 
+      
+      Please wait for a response before asking again!`
     );
     return;
   }
@@ -47,15 +49,17 @@ bot.on("text", async (ctx) => {
 
   const userMessage = ctx.message.text;
 
-  const loadingMessage = await ctx.reply(
-    "🤖 *Thinking...* This may take a few minutes. Please wait patiently and avoid sending multiple requests."
+  const loadingMessage = await ctx.replyWithMarkdown(
+    `🤖 *Thinking...* 
+
+    This may take a few minutes. Please wait patiently and avoid sending multiple requests.`
   );
 
   const userCredits = await getUserCredits(userId);
   if (userCredits === null) {
     await initializeUser(userId, ctx.message.from.username || "unknown");
   } else if (userCredits <= 0) {
-    await ctx.reply(
+    await ctx.replyWithMarkdown(
       `⚠️ *You've used all ${MAX_CREDITS} free requests!* 🚀`,
       Markup.inlineKeyboard([
         Markup.button.url("📩 Message for Credits", "https://t.me/wei_b0"),
