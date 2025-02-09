@@ -8,7 +8,7 @@ export const fetchCryptoriaResponse = async (
     const response = await axios.post(
       `${API_URL}/chat`,
       { query },
-      { headers: { "x-api-key": API_KEY }, timeout: 360000 }
+      { headers: { "x-api-key": API_KEY } }
     );
     return response.data.chatId || "⚠️ AI is currently unavailable.";
   } catch (error) {
