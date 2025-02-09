@@ -13,7 +13,8 @@ Content-Type: application/json
 
 ```json
 {
-  "role": "app"
+  "role": "app",
+  "username": ""
 }
 ```
 
