@@ -20,7 +20,7 @@ function App() {
           <p className="text-base md:text-lg text-gray-400 max-w-2xl mb-8 px-4 leading-relaxed">
             Web3 Twitter is a goldmine of alpha, yet most of it disappears into the void. Track, analyze, and act on it in real-time.
           </p>
-          <div className='flex flex-row space-x-5'>
+          <div className='flex flex-col space-y-4 md:flex-row md:space-x-5 md:space-y-0'>
             <button onClick={() => window.open('https://t.me/ChatCXAI_Bot', '_blank', 'noopener,noreferrer')} className="bg-blue-800 hover:bg-blue-500 text-white px-8 py-3 rounded-full flex items-center gap-2 transition-all font-cassio w-full sm:w-auto justify-center">
               Get Started <ArrowRight className="w-5 h-5" />
             </button>
