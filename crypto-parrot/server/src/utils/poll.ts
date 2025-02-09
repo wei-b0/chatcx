@@ -12,7 +12,7 @@ export async function pollForJobCompletion(chatId: string): Promise<any> {
   while (attempts < MAX_RETRIES) {
     try {
       const statusResponse = await axios.get(
-        `${process.env.API_URL}/chat/${chatId}`,
+        `${process.env.API_URL}/${chatId}`,
         {
           headers: { "x-api-key": process.env.API_KEY },
         }
