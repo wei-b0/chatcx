@@ -23,6 +23,6 @@ x-api-key: YOUR_APP_KEY
 {
   "success": true,
   "chatId": "1234-5678-91011",
-  "message": "Processing request, check status later."
+  "message": "Processing request, check status using GET /chat/:chatId."
 }
 ```

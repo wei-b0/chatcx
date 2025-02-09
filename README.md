@@ -4,6 +4,12 @@ ChatCX is an AI-powered agent designed to provide real-time insights and intelli
 
 ---
 
+🔗 **Live API Base URL:** [https://autonome.alt.technology/chatcx-itferc/api](https://autonome.alt.technology/chatcx-itferc/api)
+📢 **Start using ChatCX:** [@ChatCX_Bot](https://t.me/ChatCX_Bot)
+📢 **Start using Crypto Parrot:** [@CryptoParrotAI_Bot](https://t.me/CryptoParrotAI_Bot)
+
+---
+
 ## Features
 
 - **Real-time Data Tracking**: Continuously monitors and analyzes posts from top Web3 influencers, analysts, and builders.
@@ -54,8 +60,12 @@ ChatCX is an AI-powered agent designed to provide real-time insights and intelli
 │   ├── Dockerfile # Docker configuration for the service
 │   ├── docker-compose.yml # Docker Compose setup
 │   └── package.json # Service dependencies
+|
+├── docs/ # Docs for everything
 │
-└── README.md # Project documentation
+└── README.md
+│
+└── LICENSE.md
 ```
 
 ---
@@ -77,7 +87,7 @@ ChatCX is an AI-powered agent designed to provide real-time insights and intelli
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/your-repo/chatcx.git
+   git clone https://github.com/wei_b0/chatcx.git
    cd chatcx
    ```
 

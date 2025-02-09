@@ -7,7 +7,7 @@ The Admin API provides endpoints for managing system data, accounts, and monitor
 ### 🔹 Base URL
 
 ```plaintext
-https://chatcx.com/api/
+https://autonome.alt.technology/chatcx-itferc/api
 ```
 
 ---
