@@ -1,12 +1,16 @@
-# ChatCX AI Agent
+# ChatCX
 
 ChatCX is an AI-powered agent designed to provide real-time insights and intelligence from Web3 Twitter. It tracks, analyzes, and delivers actionable data on emerging trends, narratives, and market-shifting conversations in the crypto space. The agent is built to help users stay ahead of the curve by providing pure, actionable insights powered by advanced RAG (Retrieval-Augmented Generation) and Reinforcement Learning algorithms.
 
 ---
 
 🔗 **Live API Base URL:** [https://autonome.alt.technology/chatcx-itferc/api](https://autonome.alt.technology/chatcx-itferc/api)
+
 📢 **Start using ChatCX:** [@ChatCX_Bot](https://t.me/ChatCX_Bot)
+
 📢 **Start using Crypto Parrot:** [@CryptoParrotAI_Bot](https://t.me/CryptoParrotAI_Bot)
+
+📜 **Docs:** [ChatCX Docs](https://chatcx.gitbook.io/chatcx-docs))
 
 ---
 
