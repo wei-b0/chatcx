@@ -8,25 +8,11 @@ import {
 import { fetchCryptoriaResponse } from "./services/cryptoriaService";
 import { splitMessageIntoChunks } from "./utils/format";
 import { pollForJobCompletion } from "./utils/poll";
+import { preventMultipleRequests } from "./utils/middleware";
 
 const bot = new Telegraf(BOT_TOKEN);
-const isProcessing = new Map();
 
-bot.use(async (ctx, next) => {
-  const userId = ctx.message?.from.id;
-  if (!userId) return next();
-
-  if (isProcessing.get(userId)) {
-    await ctx.replyWithMarkdown(
-      `⏳ *I'm still processing your last request...*\n\nPlease wait for a response before asking again!`
-    );
-    return;
-  }
-
-  isProcessing.set(userId, true);
-  await next();
-  isProcessing.delete(userId);
-});
+bot.use(preventMultipleRequests());
 
 bot.start(async (ctx) => {
   const userId = ctx.message.from.id;

@@ -1,10 +1,11 @@
-import { Telegraf, Context } from "telegraf";
+import { Telegraf, Context, Middleware } from "telegraf";
 import dotenv from "dotenv";
 import { checkRateLimit, getUserByTelegramId } from "./db";
 import { splitMessageIntoChunks } from "./utils/format";
 import { trackEvent } from "./utils/posthog";
 import axios from "axios";
 import { pollForJobCompletion } from "./utils/poll";
+import { preventMultipleRequests } from "./utils/middleware";
 
 dotenv.config();
 
@@ -12,7 +13,6 @@ const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const MINI_APP_URL = process.env.MINI_APP_URL;
 const API_URL = process.env.API_URL;
 const API_KEY = process.env.API_KEY;
-const isProcessing = new Map();
 
 if (!BOT_TOKEN || !MINI_APP_URL || !API_KEY || !API_URL) {
   throw new Error("Incorrect .env");
@@ -20,28 +20,14 @@ if (!BOT_TOKEN || !MINI_APP_URL || !API_KEY || !API_URL) {
 
 const bot = new Telegraf(BOT_TOKEN);
 
+bot.use(preventMultipleRequests());
+
 bot.telegram.setMyCommands([
   { command: "/start", description: "Start the bot" },
   { command: "/help", description: "Get help information" },
   { command: "/about", description: "Learn about this bot" },
   { command: "/settings", description: "Adjust your preferences" },
 ]);
-
-bot.use(async (ctx, next) => {
-  const userId = ctx.message?.from.id;
-  if (!userId) return next();
-
-  if (isProcessing.get(userId)) {
-    await ctx.replyWithMarkdown(
-      `⏳ *I'm still processing your last request...*\n\nPlease wait for a response before asking again!`
-    );
-    return;
-  }
-
-  isProcessing.set(userId, true);
-  await next();
-  isProcessing.delete(userId);
-});
 
 bot.start(async (ctx: Context) => {
   const username = ctx.from?.username || ctx.from?.first_name || "User";
